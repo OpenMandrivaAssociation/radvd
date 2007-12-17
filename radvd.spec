@@ -15,7 +15,6 @@ Source1:	radvd-init.bz2
 Source2:	radvd.conf.bz2
 Requires(post):	rpm-helper
 Requires(preun):	rpm-helper
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	flex bison
 
 %description
