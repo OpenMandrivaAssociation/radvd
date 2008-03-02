@@ -1,6 +1,6 @@
 %define	name	radvd
-%define	version	1.0
-%define rel	2
+%define	version	1.1
+%define rel	1
 %define	release	%mkrel %{rel}
 
 Summary:	The IPv6 Router Advertisement Daemon
