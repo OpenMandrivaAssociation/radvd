@@ -1,22 +1,18 @@
-%define	name	radvd
-%define	version	1.1
-%define rel	1
-%define	release	%mkrel %{rel}
-
 Summary:	The IPv6 Router Advertisement Daemon
-Url:		http://v6web.litech.org/radvd/
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
+Name:		radvd
+Version:	1.2
+Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
-Source0:	http://v6web.litech.org/radvd/dist/%{name}-%{version}.tar.bz2
-Source1:	radvd-init.bz2
-Source2:	radvd.conf.bz2
-Requires(post):	rpm-helper
-Requires(preun):	rpm-helper
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+URL:		http://v6web.litech.org/radvd/
+Source0:	http://v6web.litech.org/radvd/dist/%{name}-%{version}.tar.gz
+Source1:	radvd.init
+Source2:	radvd.conf
+Source3:	radvd.sysconfig
+Requires(post): rpm-helper
+Requires(preun): rpm-helper
 BuildRequires:	flex bison
+Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 IPv6 has a lot more support for autoconfiguration than IPv4. But
@@ -34,7 +30,11 @@ their interfaces. This information includes address prefixes, the MTU of
 the link and information about default routers.
 
 %prep
+
 %setup -q
+cp %{SOURCE1} radvd.init
+cp %{SOURCE2} radvd.conf
+cp %{SOURCE3} radvd.sysconfig
 
 %build
 %serverbuild
@@ -43,21 +43,20 @@ the link and information about default routers.
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+
 %makeinstall_std
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
-bzcat %{SOURCE2} > $RPM_BUILD_ROOT%{_sysconfdir}/radvd.conf
-chmod 0644 $RPM_BUILD_ROOT%{_sysconfdir}/radvd.conf
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+install -d %{buildroot}%{_initrddir}
 
-mkdir -p $RPM_BUILD_ROOT%{_initrddir}
-bzcat %{SOURCE1} > $RPM_BUILD_ROOT%{_initrddir}/radvd
-chmod 755 $RPM_BUILD_ROOT%{_initrddir}/radvd
-perl -pi -e "s|/etc/rc.d/init.d|%{_initrddir}|" $RPM_BUILD_ROOT%{_initrddir}/*
-
+install -m0644 radvd.conf %{buildroot}%{_sysconfdir}/radvd.conf
+install -m0644 radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
+install -m0755 radvd.init %{buildroot}%{_initrddir}/radvd
+perl -pi -e "s|/etc/rc.d/init\.d|%{_initrddir}|" %{buildroot}%{_initrddir}/*
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post
 %_post_service radvd
@@ -69,8 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc CHANGES COPYRIGHT README TODO INTRO.html radvd.conf.example
 %config(noreplace) %{_sysconfdir}/radvd.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/radvd
 %{_initrddir}/radvd
 %{_sbindir}/*
 %{_mandir}/*/*
-
-
