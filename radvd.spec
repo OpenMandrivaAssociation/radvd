@@ -1,6 +1,6 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
-Version:	1.4
+Version:	1.6
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
@@ -38,7 +38,7 @@ cp %{SOURCE3} radvd.sysconfig
 
 %build
 %serverbuild
-%configure
+%configure2_5x
 %make
 
 
