@@ -1,7 +1,7 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
 Version:	1.6
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	BSD
 Group:		System/Servers
 URL:		http://v6web.litech.org/radvd/
