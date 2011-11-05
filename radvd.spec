@@ -1,6 +1,6 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
-Version:	1.8
+Version:	1.8.3
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
