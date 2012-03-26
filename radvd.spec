@@ -1,7 +1,7 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
-Version:	1.8.3
-Release:	%mkrel 1
+Version:	1.8.5
+Release:	1
 License:	BSD
 Group:		System/Servers
 URL:		http://v6web.litech.org/radvd/
@@ -12,7 +12,6 @@ Source3:	radvd.sysconfig
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 BuildRequires:	flex bison
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 IPv6 has a lot more support for autoconfiguration than IPv4. But
@@ -43,7 +42,6 @@ cp %{SOURCE3} radvd.sysconfig
 
 
 %install
-rm -rf %{buildroot}
 
 %makeinstall_std
 
@@ -55,9 +53,6 @@ install -m0644 radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
 install -m0755 radvd.init %{buildroot}%{_initrddir}/radvd
 perl -pi -e "s|/etc/rc.d/init\.d|%{_initrddir}|" %{buildroot}%{_initrddir}/*
 
-%clean
-rm -rf %{buildroot}
-
 %post
 %_post_service radvd
 
@@ -65,7 +60,6 @@ rm -rf %{buildroot}
 %_preun_service radvd
  
 %files
-%defattr(-,root,root)
 %doc CHANGES COPYRIGHT README TODO INTRO.html radvd.conf.example
 %config(noreplace) %{_sysconfdir}/radvd.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/radvd
