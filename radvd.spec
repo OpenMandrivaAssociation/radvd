@@ -1,17 +1,18 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
-Version:	1.8.5
+Version:	1.9.1
 Release:	1
 License:	BSD
 Group:		System/Servers
 URL:		http://v6web.litech.org/radvd/
 Source0:	http://v6web.litech.org/radvd/dist/%{name}-%{version}.tar.gz
-Source1:	radvd.init
-Source2:	radvd.conf
-Source3:	radvd.sysconfig
+Source1:	radvd-tmpfs.conf
+Source2:	radvd.service
+Source3:	radvd.conf
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 BuildRequires:	flex bison
+BuildRequires:	pkgconfig(libdaemon)
 
 %description
 IPv6 has a lot more support for autoconfiguration than IPv4. But
@@ -31,13 +32,15 @@ the link and information about default routers.
 %prep
 
 %setup -q
-cp %{SOURCE1} radvd.init
-cp %{SOURCE2} radvd.conf
-cp %{SOURCE3} radvd.sysconfig
+for F in CHANGES; do
+    iconv -f iso-8859-1 -t utf-8 < "$F" > "${F}.new"
+    touch -r "$F" "${F}.new"
+    mv "${F}.new" "$F"
+done
 
 %build
 %serverbuild
-%configure2_5x
+%configure2_5x --with-pidfile=%{_localstatedir}/run/radvd/radvd.pid
 %make
 
 
@@ -45,24 +48,51 @@ cp %{SOURCE3} radvd.sysconfig
 
 %makeinstall_std
 
-install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -d %{buildroot}%{_initrddir}
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+mkdir -p %{buildroot}%{_localstatedir}/run/radvd
+mkdir -p %{buildroot}%{_unitdir}
 
-install -m0644 radvd.conf %{buildroot}%{_sysconfdir}/radvd.conf
-install -m0644 radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
-install -m0755 radvd.init %{buildroot}%{_initrddir}/radvd
-perl -pi -e "s|/etc/rc.d/init\.d|%{_initrddir}|" %{buildroot}%{_initrddir}/*
+install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/radvd.conf
+install -m 644 redhat/radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
+
+install -d -m 755 %{buildroot}%{_sysconfdir}/tmpfiles.d
+install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/tmpfiles.d/radvd.conf
+install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
+
+
+%pre
+%_pre_useradd radvd / /sbin/nologin
+%_pre_groupadd daemon radvd
 
 %post
-%_post_service radvd
+if [ "$1" = "1" ]; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+    /bin/systemctl enable radvd.service >/dev/null 2>&1 || :
+fi
+
+%postun
+%_postun_groupdel daemon radvd
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    /bin/systemctl try-restart radvd.service >/dev/null 2>&1 || :
+fi
 
 %preun
-%_preun_service radvd
+if [ "$1" -eq 0 ]; then
+   /bin/systemctl disable radvd.service > /dev/null 2>&1 || :
+   /bin/systemctl stop radvd.service > /dev/null 2>&1 || :
+fi
  
+
+
 %files
-%doc CHANGES COPYRIGHT README TODO INTRO.html radvd.conf.example
+%doc CHANGES COPYRIGHT INTRO.html README TODO
+%{_unitdir}/radvd.service
 %config(noreplace) %{_sysconfdir}/radvd.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/radvd
-%{_initrddir}/radvd
-%{_sbindir}/*
+%config(noreplace) %{_sysconfdir}/tmpfiles.d/radvd.conf
+%dir %attr(-,radvd,radvd) %{_localstatedir}/run/radvd/
+%doc radvd.conf.example
 %{_mandir}/*/*
+%{_sbindir}/radvd
+%{_sbindir}/radvdump
