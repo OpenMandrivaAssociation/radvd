@@ -1,0 +1,5 @@
+sources:
+  "radvd-1.9.1.tar.gz:"	8db7d69f5ca4ce3643f06866b4dbf634490f479a
+  "radvd.conf:"	9195ed44dcc1f117a273c4147d3f1016d64c561d
+  "radvd.service:"	4fa911ec622e12fd2bca5a26ee2928287bbaa298
+  "radvd-tmpfs.conf:"	dc37056fdd99ecce6d503cdeaf1c2f84bcd30e83
