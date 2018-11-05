@@ -1,7 +1,7 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
 Version:	2.17
-Release:	2
+Release:	3
 License:	BSD
 Group:		System/Servers
 Url:		http://v6web.litech.org/radvd/
@@ -39,7 +39,7 @@ done
 
 %build
 %serverbuild
-%configure2_5x --with-pidfile=%{_localstatedir}/run/radvd/radvd.pid
+%configure --with-pidfile=%{_localstatedir}/run/radvd/radvd.pid
 %make
 
 %install
