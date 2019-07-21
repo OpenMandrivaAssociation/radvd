@@ -1,7 +1,7 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
-Version:	2.17
-Release:	4
+Version:	2.18
+Release:	1
 License:	BSD
 Group:		System/Servers
 Url:		http://v6web.litech.org/radvd/
@@ -51,7 +51,7 @@ mkdir -p %{buildroot}%{_localstatedir}/run/radvd
 mkdir -p %{buildroot}%{_unitdir}
 
 install -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/radvd.conf
-install -m 644 redhat/radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
+install -m 644 redhat/SysV/radvd.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/radvd
 
 install -d -m 755 %{buildroot}%{_sysconfdir}/tmpfiles.d
 install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/tmpfiles.d/radvd.conf
