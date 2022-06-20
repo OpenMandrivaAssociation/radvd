@@ -1,7 +1,7 @@
 Summary:	The IPv6 Router Advertisement Daemon
 Name:		radvd
 Version:	2.19
-Release:	1
+Release:	2
 License:	BSD
 Group:		System/Servers
 Url:		http://v6web.litech.org/radvd/
@@ -41,10 +41,10 @@ done
 %build
 %serverbuild
 %configure --with-pidfile=%{_localstatedir}/run/radvd/radvd.pid
-%make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 mkdir -p %{buildroot}%{_localstatedir}/run/radvd
@@ -58,26 +58,26 @@ install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/tmpfiles.d/radvd.conf
 install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 %pre
-%_pre_useradd radvd / /sbin/nologin
+%_pre_useradd radvd / %{_sbindir}/nologin
 %_pre_groupadd daemon radvd
 
 %post
 if [ "$1" = "1" ]; then
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-    /bin/systemctl enable radvd.service >/dev/null 2>&1 || :
+	systemctl daemon-reload >/dev/null 2>&1 || :
+	systemctl enable radvd.service >/dev/null 2>&1 || :
 fi
 
 %postun
 %_postun_groupdel daemon radvd
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
-    /bin/systemctl try-restart radvd.service >/dev/null 2>&1 || :
+	systemctl try-restart radvd.service >/dev/null 2>&1 || :
 fi
 
 %preun
 if [ "$1" -eq 0 ]; then
-   /bin/systemctl disable radvd.service > /dev/null 2>&1 || :
-   /bin/systemctl stop radvd.service > /dev/null 2>&1 || :
+	systemctl disable radvd.service > /dev/null 2>&1 || :
+	systemctl stop radvd.service > /dev/null 2>&1 || :
 fi
  
 %files
@@ -91,4 +91,3 @@ fi
 %{_mandir}/*/*
 %{_sbindir}/radvd
 %{_sbindir}/radvdump
-
