@@ -13,6 +13,8 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	pkgconfig(libdaemon)
 BuildRequires:	rpm-helper
+# For iso-8859-1 conversion in %%prep
+BuildRequires:	locales-extra-charsets
 Requires(post,preun):	rpm-helper
 
 %description
