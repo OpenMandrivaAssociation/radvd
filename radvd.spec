@@ -4,7 +4,7 @@ Version:	2.19
 Release:	3
 License:	BSD
 Group:		System/Servers
-Url:		http://v6web.litech.org/radvd/
+Url:		https://v6web.litech.org/radvd/
 Source0:	http://v6web.litech.org/radvd/dist/%{name}-%{version}.tar.gz
 Source1:	radvd-tmpfs.conf
 Source2:	radvd.service
