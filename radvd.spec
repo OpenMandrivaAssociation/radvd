@@ -9,6 +9,11 @@ Source0:	http://v6web.litech.org/radvd/dist/%{name}-%{version}.tar.gz
 Source1:	radvd-tmpfs.conf
 Source2:	radvd.service
 Source3:	radvd.conf
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	pkgconfig(libdaemon)
